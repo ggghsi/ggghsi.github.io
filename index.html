@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Zakat</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(120deg, #3a5c86, #a8c0ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #111111;
+            position: relative;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(12, 12, 12, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 90vh; /* Ensures the container doesn't overflow */
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #000508;
+            font-family: 'Georgia', serif;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .arabic-pattern {
+            text-align: center;
+            color: #2f6b43;
+            font-size: 24px;
+            font-family: 'Amiri', serif;
+            margin-bottom: 20px;
+        }
+
+        label, select, input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        input, select, button {
+            padding: 12px;
+            border: 1px solid #0e0b0b;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #3f72af;
+            outline: none;
+            box-shadow: 0 0 5px rgba(63, 114, 175, 0.5);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #388e3c;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #333;
+            text-align: left;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto; /* Makes the result area scrollable if too long */
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .footer-link {
+            color: #3f72af;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .result {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kalkulator Zakat</h1>
+        <div class="arabic-pattern">
+            <p><strong>قال الله تعالى</strong></p>
+            <p>وَأَقِيمُوا۟ ٱلصَّلَاةَ وَءَاتُوا۟ ٱلزَّكَاةَ</p>
+            <p>(QS. Al-Baqarah: 43)</p>
+            <p><em>“Dan dirikanlah shalat, tunaikanlah zakat...”</em></p>
+        </div>
+        <form id="zakatForm">
+            <label for="zakatType">Pilih Jenis Zakat:</label>
+            <select id="zakatType" required>
+                <option value="fitrah">Zakat Fitrah</option>
+                <option value="mal">Zakat Mal</option>
+                <option value="pertanian">Zakat Pertanian</option>
+                <option value="emas">Zakat Emas/Perak</option>
+                <option value="peternakan">Zakat Peternakan</option>
+                <option value="penghasilan">Zakat Penghasilan</option>
+            </select>
+
+            <div id="fitrahSection">
+                <label for="jumlahJiwa">Jumlah Jiwa:</label>
+                <input type="number" id="jumlahJiwa" min="1" value="1">
+                <label for="hargaBeras">Harga Beras per Kg (Rp):</label>
+                <input type="number" id="hargaBeras" min="0" required>
+                <p><strong>Persentase Zakat Fitrah:</strong> 2.5 kg per jiwa</p>
+            </div>
+
+            <div id="malSection" style="display: none;">
+                <label for="jumlahHarta">Jumlah Harta (Rp):</label>
+                <input type="number" id="jumlahHarta" min="0">
+                <label for="jumlahHutang">Jumlah Hutang (Rp):</label>
+                <input type="number" id="jumlahHutang" min="0" value="0">
+                <p><strong>Persentase Zakat Mal:</strong> 2.5%</p>
+            </div>
+
+            <div id="pertanianSection" style="display: none;">
+                <label for="hasilPanen">Hasil Panen (Kg):</label>
+                <input type="number" id="hasilPanen" min="0">
+                <label for="jenisIrigasi">Jenis Irigasi:</label>
+                <select id="jenisIrigasi">
+                    <option value="tanpa">Tanpa Irigasi (10%)</option>
+                    <option value="dengan">Dengan Irigasi (5%)</option>
+                </select>
+                <label for="hargaPanen">Harga per Kg Hasil Panen (Rp):</label>
+                <input type="number" id="hargaPanen" min="0">
+            </div>
+
+            <div id="emasSection" style="display: none;">
+                <label for="jumlahEmas">Jumlah Emas/Perak (Gram):</label>
+                <input type="number" id="jumlahEmas" min="0">
+                <label for="hargaEmas">Harga per Gram Emas/Perak (Rp):</label>
+                <input type="number" id="hargaEmas" min="0">
+                <p><strong>Persentase Zakat Emas/Perak:</strong> 2.5%</p>
+            </div>
+
+            <div id="peternakanSection" style="display: none;">
+                <label for="jenisTernak">Jenis Ternak:</label>
+                <select id="jenisTernak">
+                    <option value="kambing">Kambing/Domba</option>
+                    <option value="sapi">Sapi</option>
+                    <option value="unta">Unta</option>
+                </select>
+                <label for="jumlahTernak">Jumlah Ternak:</label>
+                <input type="number" id="jumlahTernak" min="0">
+                <label for="hargaTernak">Harga per Ekor Ternak (Rp):</label>
+                <input type="number" id="hargaTernak" min="0">
+                <p><strong>Persentase Zakat Peternakan:</strong> 2.5%</p>
+            </div>
+
+            <div id="penghasilanSection" style="display: none;">
+                <label for="penghasilanBulanan">Penghasilan Bulanan (Rp):</label>
+                <input type="number" id="penghasilanBulanan" min="0">
+                <label for="biayaKebutuhan">Biaya Kebutuhan Bulanan (Rp):</label>
+                <input type="number" id="biayaKebutuhan" min="0" value="0">
+                <p><strong>Persentase Zakat Penghasilan:</strong> 2.5%</p>
+            </div>
+
+            <button type="submit">Hitung Zakat</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <footer>
+        <p>Developed by <a href="https://www.zakatdev.com" class="footer-link" target="_blank">Zakat Development</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('zakatType').addEventListener('change', function() {
+            var zakatType = this.value;
+            document.querySelectorAll('div[id$="Section"]').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(zakatType + 'Section').style.display = 'block';
+        });
+
+        document.getElementById('zakatForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var zakatType = document.getElementById('zakatType').value;
+            var result = 0;
+            var message = "";
+            var breakdown = "";
+
+            if (zakatType === "fitrah") {
+                var jumlahJiwa = parseInt(document.getElementById('jumlahJiwa').value);
+                var hargaBeras = parseInt(document.getElementById('hargaBeras').value);
+                result = jumlahJiwa * 2.5 * hargaBeras;
+                breakdown = "Formula: " + jumlahJiwa + " jiwa x 2.5 kg x " + hargaBeras.toLocaleString() + " Rp/kg = Rp " + result.toLocaleString();
+                message = "Zakat Fitrah untuk " + jumlahJiwa + " jiwa adalah Rp " + result.toLocaleString();
+            } else if (zakatType === "mal") {
+                var jumlahHarta = parseFloat(document.getElementById('jumlahHarta').value);
+                var jumlahHutang = parseFloat(document.getElementById('jumlahHutang').value);
+                var totalHarta = jumlahHarta - jumlahHutang;
+                result = totalHarta * 0.025;
+                breakdown = "Formula: (" + jumlahHarta.toLocaleString() + " Rp - " + jumlahHutang.toLocaleString() + " Rp) x 2.5% = Rp " + result.toLocaleString();
+                message = "Zakat Mal adalah Rp " + result.toLocaleString();
+            } else if (zakatType === "pertanian") {
+                var hasilPanen = parseInt(document.getElementById('hasilPanen').value);
+                var jenisIrigasi = document.getElementById('jenisIrigasi').value;
+                var hargaPanen = parseInt(document.getElementById('hargaPanen').value);
+                var percentage = (jenisIrigasi === 'tanpa') ? 0.1 : 0.05;
+                result = hasilPanen * hargaPanen * percentage;
+                breakdown = "Formula: " + hasilPanen + " Kg x " + hargaPanen.toLocaleString() + " Rp/Kg x " + (percentage * 100) + "% = Rp " + result.toLocaleString();
+                message = "Zakat Pertanian adalah Rp " + result.toLocaleString();
+            } else if (zakatType === "emas") {
+                var jumlahEmas = parseInt(document.getElementById('jumlahEmas').value);
+                var hargaEmas = parseInt(document.getElementById('hargaEmas').value);
+                result = jumlahEmas * hargaEmas * 0.025;
+                breakdown = "Formula: " + jumlahEmas + " gram x " + hargaEmas.toLocaleString() + " Rp/gram x 2.5% = Rp " + result.toLocaleString();
+                message = "Zakat Emas/Perak adalah Rp " + result.toLocaleString();
+            } else if (zakatType === "peternakan") {
+                var jumlahTernak = parseInt(document.getElementById('jumlahTernak').value);
+                var hargaTernak = parseInt(document.getElementById('hargaTernak').value);
+                result = jumlahTernak * hargaTernak * 0.025;
+                breakdown = "Formula: " + jumlahTernak + " ekor x " + hargaTernak.toLocaleString() + " Rp/ekor x 2.5% = Rp " + result.toLocaleString();
+                message = "Zakat Peternakan adalah Rp " + result.toLocaleString();
+            } else if (zakatType === "penghasilan") {
+                var penghasilanBulanan = parseInt(document.getElementById('penghasilanBulanan').value);
+                var biayaKebutuhan = parseInt(document.getElementById('biayaKebutuhan').value);
+                var hasilPenghasilan = penghasilanBulanan - biayaKebutuhan;
+                result = hasilPenghasilan * 0.025;
+                breakdown = "Formula: (" + penghasilanBulanan.toLocaleString() + " Rp - " + biayaKebutuhan.toLocaleString() + " Rp) x 2.5% = Rp " + result.toLocaleString();
+                message = "Zakat Penghasilan adalah Rp " + result.toLocaleString();
+            }
+
+            document.getElementById('result').innerHTML = `<strong>Hasil:</strong><br>${message}<br><br><strong>Perhitungan:</strong><br>${breakdown}`;
+        });
+    </script>
+</body>
+</html>
